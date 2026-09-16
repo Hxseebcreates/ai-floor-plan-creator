@@ -284,13 +284,16 @@ planArea.innerHTML = `
             LIVING ROOM
           </div>
 
-          <div class="room bed1">
-            BEDROOM 1
-          </div>
-
-          <div class="room bed2">
-            BEDROOM 2
-          </div>
+          ${Array.from({length: bedrooms}, (_, i) => `
+  <div class="room bedroom" style="
+    left:${i % 2 === 0 ? '0' : '50%'};
+    top:${35 + Math.floor(i / 2) * 16.25}%;
+    width:50%;
+    height:16.25%;
+  ">
+    BEDROOM ${i + 1}
+  </div>
+`).join('')}
 
           <div class="room kitchen">
             KITCHEN
