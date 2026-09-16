@@ -274,8 +274,11 @@
       const planArea = document.getElementById("planArea");
       const dimensions = document.getElementById("dimensions");
 
-      planArea.innerHTML = `
-        <div class="plot">
+    const plotWidth = Math.max(240, Math.min(500, width * 10));
+const plotHeight = Math.max(300, Math.min(650, length * 10));
+
+planArea.innerHTML = `
+  <div class="plot" style="width:${plotWidth}px; height:${plotHeight}px;">
 
           <div class="room living">
             LIVING ROOM
