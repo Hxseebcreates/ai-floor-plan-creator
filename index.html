@@ -1,1 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Floor Plan Creator</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #17202a;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 24px 20px;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 0;
+      color: #cbd5e1;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .plan-area {
+      min-height: 500px;
+      border: 2px dashed #94a3b8;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      overflow: auto;
+    }
+
+    .empty {
+      text-align: center;
+      color: #64748b;
+      padding: 30px;
+    }
+
+    .plot {
+      position: relative;
+      width: 420px;
+      height: 600px;
+      background: white;
+      border: 5px solid #17202a;
+    }
+
+    .room {
+      position: absolute;
+      border: 2px solid #17202a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: bold;
+      background: #eef2ff;
+    }
+
+    .living {
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 35%;
+    }
+
+    .bed1 {
+      left: 0;
+      top: 35%;
+      width: 50%;
+      height: 32.5%;
+    }
+
+    .bed2 {
+      right: 0;
+      top: 35%;
+      width: 50%;
+      height: 32.5%;
+    }
+
+    .kitchen {
+      left: 0;
+      bottom: 0;
+      width: 50%;
+      height: 32.5%;
+    }
+
+    .bath {
+      right: 0;
+      bottom: 0;
+      width: 50%;
+      height: 16.25%;
+    }
+
+    .stair {
+      right: 0;
+      bottom: 16.25%;
+      width: 50%;
+      height: 16.25%;
+    }
+
+    .dimensions {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    @media (max-width: 750px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .plot {
+        width: 300px;
+        height: 430px;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>AI Floor Plan Creator</h1>
+    <p>Design your home floor plan from your requirements.</p>
+  </header>
+
+  <div class="container">
+
+    <div class="grid">
+
+      <!-- INPUT PANEL -->
+      <div class="card">
+
+        <h2>Project Details</h2>
+
+        <label>Plot Width (ft)</label>
+        <input id="width" type="number" value="30">
+
+        <label>Plot Length (ft)</label>
+        <input id="length" type="number" value="50">
+
+        <label>Bedrooms</label>
+        <input id="bedrooms" type="number" value="2" min="1" max="6">
+
+        <label>Bathrooms</label>
+        <input id="bathrooms" type="number" value="1" min="1" max="5">
+
+        <label>Kitchen</label>
+        <select id="kitchen">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+
+        <label>Living Room</label>
+        <select id="living">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+
+        <button onclick="generatePlan()">
+          Generate Floor Plan
+        </button>
+
+      </div>
+
+
+      <!-- FLOOR PLAN -->
+      <div class="card">
+
+        <h2>Floor Plan Preview</h2>
+
+        <div id="planArea" class="plan-area">
+
+          <div class="empty">
+            <h3>Your floor plan will appear here</h3>
+            <p>Enter your requirements and tap Generate Floor Plan.</p>
+          </div>
+
+        </div>
+
+        <div id="dimensions"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    function generatePlan() {
+
+      const width = document.getElementById("width").value;
+      const length = document.getElementById("length").value;
+      const bedrooms = document.getElementById("bedrooms").value;
+      const bathrooms = document.getElementById("bathrooms").value;
+
+      const planArea = document.getElementById("planArea");
+      const dimensions = document.getElementById("dimensions");
+
+      planArea.innerHTML = `
+        <div class="plot">
+
+          <div class="room living">
+            LIVING ROOM
+          </div>
+
+          <div class="room bed1">
+            BEDROOM 1
+          </div>
+
+          <div class="room bed2">
+            BEDROOM 2
+          </div>
+
+          <div class="room kitchen">
+            KITCHEN
+          </div>
+
+          <div class="room stair">
+            STAIRCASE
+          </div>
+
+          <div class="room bath">
+            BATHROOM
+          </div>
+
+        </div>
+      `;
+
+      dimensions.innerHTML = `
+        <div class="dimensions">
+          <strong>Plot:</strong> ${width} × ${length} ft
+          &nbsp; | &nbsp;
+          <strong>Bedrooms:</strong> ${bedrooms}
+          &nbsp; | &nbsp;
+          <strong>Bathrooms:</strong> ${bathrooms}
+        </div>
+      `;
+    }
+
+  </script>
+
+</body>
+  </html>
