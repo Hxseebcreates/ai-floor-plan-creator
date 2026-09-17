@@ -334,14 +334,16 @@
       ${bedroomHTML}
 
       <!-- KITCHEN -->
-      <div class="room" style="
-        left:0;
-        bottom:0;
-        width:50%;
-        height:${bottomHeight}%;
-      ">
-        KITCHEN
-      </div>
+      ${document.getElementById("kitchen").value === "yes" ? `
+  <div class="room" style="
+    left:0;
+    bottom:0;
+    width:50%;
+    height:${bottomHeight}%;
+  ">
+    KITCHEN
+  </div>
+` : ""}
 
       <!-- STAIRCASE -->
       <div class="room" style="
