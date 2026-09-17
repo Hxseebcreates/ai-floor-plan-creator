@@ -277,10 +277,14 @@
   const plotWidth = Math.max(240, Math.min(500, width * 10));
   const plotHeight = Math.max(300, Math.min(650, length * 10));
 
-  // Bedroom section gets 65% of plot after living room
+  // Layout percentages
+  const livingHeight = 20;
+  const bedroomHeight = 65;
+  const bottomHeight = 15;
+
+  // Calculate bedroom rows
   const bedroomRows = Math.ceil(bedrooms / 2);
-  const bedroomSectionHeight = 65;
-  const bedroomRowHeight = bedroomSectionHeight / bedroomRows;
+  const bedroomRowHeight = bedroomHeight / bedroomRows;
 
   let bedroomHTML = "";
 
@@ -289,10 +293,10 @@
     const row = Math.floor(i / 2);
     const column = i % 2;
 
+    const top = livingHeight + (row * bedroomRowHeight);
     const left = column * 50;
-    const top = 35 + (row * bedroomRowHeight);
 
-    // For odd number of bedrooms, last bedroom gets full width
+    // Last bedroom gets full width when bedroom count is odd
     const isLastOddBedroom =
       bedrooms % 2 === 1 && i === bedrooms - 1;
 
@@ -316,21 +320,46 @@
       height:${plotHeight}px;
     ">
 
-      <div class="room living">
+      <!-- LIVING ROOM -->
+      <div class="room" style="
+        left:0;
+        top:0;
+        width:100%;
+        height:${livingHeight}%;
+      ">
         LIVING ROOM
       </div>
 
+      <!-- BEDROOMS -->
       ${bedroomHTML}
 
-      <div class="room kitchen">
+      <!-- KITCHEN -->
+      <div class="room" style="
+        left:0;
+        bottom:0;
+        width:50%;
+        height:${bottomHeight}%;
+      ">
         KITCHEN
       </div>
 
-      <div class="room stair">
+      <!-- STAIRCASE -->
+      <div class="room" style="
+        right:0;
+        bottom:0;
+        width:25%;
+        height:${bottomHeight}%;
+      ">
         STAIRCASE
       </div>
 
-      <div class="room bath">
+      <!-- BATHROOM -->
+      <div class="room" style="
+        right:25%;
+        bottom:0;
+        width:25%;
+        height:${bottomHeight}%;
+      ">
         BATHROOM
       </div>
 
@@ -344,7 +373,7 @@
     &nbsp; | &nbsp;
     <strong>Bathrooms:</strong> ${bathrooms}
   `;
-    }
+          }
 
   </script>
 
