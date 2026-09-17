@@ -266,66 +266,84 @@
 
     function generatePlan() {
 
-      const width = document.getElementById("width").value;
-      const length = document.getElementById("length").value;
-      const bedrooms = Number(document.getElementById("bedrooms").value);
-      const bathrooms = document.getElementById("bathrooms").value;
+  const width = Number(document.getElementById("width").value);
+  const length = Number(document.getElementById("length").value);
+  const bedrooms = Number(document.getElementById("bedrooms").value);
+  const bathrooms = Number(document.getElementById("bathrooms").value);
 
-      const planArea = document.getElementById("planArea");
-      const dimensions = document.getElementById("dimensions");
+  const planArea = document.getElementById("planArea");
+  const dimensions = document.getElementById("dimensions");
 
-    const plotWidth = Math.max(240, Math.min(500, width * 10));
-const plotHeight = Math.max(300, Math.min(650, length * 10));
+  const plotWidth = Math.max(240, Math.min(500, width * 10));
+  const plotHeight = Math.max(300, Math.min(650, length * 10));
 
-planArea.innerHTML = `
-  <div class="plot" style="width:${plotWidth}px; height:${plotHeight}px;">
+  // Bedroom section gets 65% of plot after living room
+  const bedroomRows = Math.ceil(bedrooms / 2);
+  const bedroomSectionHeight = 65;
+  const bedroomRowHeight = bedroomSectionHeight / bedroomRows;
 
-          <div class="room living">
-            LIVING ROOM
-          </div>
+  let bedroomHTML = "";
 
-          ${Array.from({length: bedrooms}, (_, i) => {
-  const rows = Math.ceil(bedrooms / 2);
-  const rowHeight = 65 / rows;
-  const left = i % 2 === 0 ? 0 : 50;
-  const top = 35 + Math.floor(i / 2) * rowHeight;
-  
-  return `
-    <div class="room bedroom" style="
-      left:${left}%;
-      top:${top}%;
-      width:${bedrooms === 1 ? '100%' : '50%'};
-      height:${rowHeight}%;
+  for (let i = 0; i < bedrooms; i++) {
+
+    const row = Math.floor(i / 2);
+    const column = i % 2;
+
+    const left = column * 50;
+    const top = 35 + (row * bedroomRowHeight);
+
+    // For odd number of bedrooms, last bedroom gets full width
+    const isLastOddBedroom =
+      bedrooms % 2 === 1 && i === bedrooms - 1;
+
+    const roomWidth = isLastOddBedroom ? 100 : 50;
+
+    bedroomHTML += `
+      <div class="room bedroom" style="
+        left:${left}%;
+        top:${top}%;
+        width:${roomWidth}%;
+        height:${bedroomRowHeight}%;
+      ">
+        BEDROOM ${i + 1}
+      </div>
+    `;
+  }
+
+  planArea.innerHTML = `
+    <div class="plot" style="
+      width:${plotWidth}px;
+      height:${plotHeight}px;
     ">
-      BEDROOM ${i + 1}
+
+      <div class="room living">
+        LIVING ROOM
+      </div>
+
+      ${bedroomHTML}
+
+      <div class="room kitchen">
+        KITCHEN
+      </div>
+
+      <div class="room stair">
+        STAIRCASE
+      </div>
+
+      <div class="room bath">
+        BATHROOM
+      </div>
+
     </div>
   `;
-}).join('')}
 
-          <div class="room kitchen">
-            KITCHEN
-          </div>
-
-          <div class="room stair">
-            STAIRCASE
-          </div>
-
-          <div class="room bath">
-            BATHROOM
-          </div>
-
-        </div>
-      `;
-
-      dimensions.innerHTML = `
-        <div class="dimensions">
-          <strong>Plot:</strong> ${width} × ${length} ft
-          &nbsp; | &nbsp;
-          <strong>Bedrooms:</strong> ${bedrooms}
-          &nbsp; | &nbsp;
-          <strong>Bathrooms:</strong> ${bathrooms}
-        </div>
-      `;
+  dimensions.innerHTML = `
+    <strong>Plot:</strong> ${width} × ${length} ft
+    &nbsp; | &nbsp;
+    <strong>Bedrooms:</strong> ${bedrooms}
+    &nbsp; | &nbsp;
+    <strong>Bathrooms:</strong> ${bathrooms}
+  `;
     }
 
   </script>
