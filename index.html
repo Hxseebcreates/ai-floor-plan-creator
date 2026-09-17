@@ -354,14 +354,16 @@
       </div>
 
       <!-- BATHROOM -->
-      <div class="room" style="
-        right:25%;
-        bottom:0;
-        width:25%;
-        height:${bottomHeight}%;
-      ">
-        BATHROOM
-      </div>
+      ${Array.from({length: bathrooms}, (_, i) => `
+  <div class="room" style="
+    right:${i * 25}%;
+    bottom:0;
+    width:25%;
+    height:${bottomHeight}%;
+  ">
+    BATHROOM ${i + 1}
+  </div>
+`).join('')}
 
     </div>
   `;
